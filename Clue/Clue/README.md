@@ -1,5 +1,12 @@
 # Taller de Logica — Investigacion Criminalistica
 
+## Integrantes:
+
+Daniel Vergara 202320392
+Mariana Rodriguez 202421258
+Martin de Angulo 202421628
+Yara Gutierrez 202511181
+
 Resuelve casos criminales usando logica proposicional y de predicados.
 
 ## Estructura del Proyecto
