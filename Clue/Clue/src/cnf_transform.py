@@ -1,4 +1,4 @@
-"""
+-"""
 cnf_transform.py — Transformaciones a Forma Normal Conjuntiva (CNF).
 El pipeline completo to_cnf() llama a todas las transformaciones en orden.
 """
