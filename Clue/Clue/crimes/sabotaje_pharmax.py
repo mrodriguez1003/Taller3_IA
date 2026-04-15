@@ -41,6 +41,97 @@ def crear_kb() -> KnowledgeBase:
     sala_cultivos  = Term("sala_cultivos")
 
     # === YOUR CODE HERE ===
+    
+    #HECHOS#
+    #Personas del caso
+    kb.add_fact(Predicate("persona", (tec_rios,)))
+    kb.add_fact(Predicate("persona", (asistente_mora,)))
+    kb.add_fact(Predicate("persona", (dra_santos,)))
+    kb.add_fact(Predicate("persona", (director_vega,)))
+    
+    #Coartads verificadas por documentación oficial
+    kb.add_fact(Predicate("documentacion_viaje_exterior", (dra_santos,)))
+    kb.add_fact(Predicate("registro_conferencia_oficial", (director_vega,)))
+    
+    #Tecnico Rios recibio pago de Syntek Corp
+    kb.add_fact(Predicate("recibio_pagos_de", (tec_rios, syntek_corp)))
+    
+    #Syntek Corp se beneficia del sabotaje (es empresa rival)
+    kb.add_fact(Predicate("empresa_beneficiado_por_sabotaje", (syntek_corp,)))
+    
+    #Registro de acceso a sala de cultivos
+    kb.add_fact(Predicate("acceso_registrado", (tec_rios, sala_cultivos)))
+    kb.add_fact(Predicate("acceso_registrado", (asistente_mora, sala_cultivos)))
+    
+    #Tecnico Rios y Asistente Mora no tienen coartada verificada
+    kb.add_fact(Predicate("sin_coartada", (tec_rios,)))
+    kb.add_fact(Predicate("sin_coartada", (asistente_mora,)))
+    
+    #Asistente Mora acusa al tecnico Rios
+    kb.add_fact(Predicate("acusa", (asistente_mora, tec_rios)))
+    
+    #====================================================================
+    #REGLAS#
+    X = Term("$X")
+    Y = Term("$Y")
+    
+    #Documentacion oficial de ausencia del pais -> coartada verificada
+    kb.add_rule(Rule(
+        head=Predicate("coartada_verificada", (X,)),
+        body=(Predicate("documentacion_viaje_exterior", (X,)),),
+    ))
+    
+    #Registro oficial de conferencia -> coartada verificada
+    kb.add_rule(Rule(
+        head=Predicate("coartada_verificada", (X,)),
+        body=(Predicate("registro_conferencia_oficial", (X,)),),
+    ))
+    
+    #Quien tiene coartada verificada queda descartado
+    kb.add_rule(Rule(
+        head=Predicate("descartado", (X,)),
+        body=(Predicate("coartada_verificada", (X,)),),
+    ))
+    
+    #Quien recibió pagos de empresa beneficiada tiene conflicto de intereses
+    kb.add_rule(Rule(
+        head=Predicate("conflicto_intereses", (X, Y)),
+        body=(
+            Predicate("recibio_pagos_de", (X, Y)),
+            Predicate("empresa_beneficiado_por_sabotaje", (Y,)),
+        ),
+    ))
+    
+    #Conflicto de intereses con empresa beneficiada -> motivo económico
+    kb.add_rule(Rule(
+        head=Predicate("motivo_economico", (X,)),
+        body=(Predicate("conflicto_intereses", (X, Term("$E"))),),
+    ))
+    
+    #Acceso registrado al lugar-> estuvo en el momento del crimen
+    kb.add_rule(Rule(
+        head=Predicate("acceso_en_momento", (X,)),
+        body=(Predicate("acceso_registrado", (X, Term("$L"))),),
+    ))
+    
+    #Sin coartada+ motivo econmico + estuvo en el lugar -> culpable
+    kb.add_rule(Rule(
+        head=Predicate("culpable", (X,)),
+        body=(
+            Predicate("sin_coartada", (X,)),
+            Predicate("motivo_economico", (X,)),
+            Predicate("acceso_en_momento", (X,)),
+        ),
+    ))
+    
+    #Denuncia de alguien que tambien estuvo en el lugar del sabotaje -> denuncia informada
+    kb.add_rule(Rule(
+        head=Predicate("denuncia_informada", (X, Y)),
+        body=(
+            Predicate("acusa", (X, Y)),
+            Predicate("acceso_en_momento", (X,)),
+        ),
+    ))
 
     # === END YOUR CODE ===
 

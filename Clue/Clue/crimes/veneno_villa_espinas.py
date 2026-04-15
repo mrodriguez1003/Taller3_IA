@@ -36,6 +36,84 @@ def crear_kb() -> KnowledgeBase:
     frasco_arsenico = Term("frasco_arsenico")
 
     # === YOUR CODE HERE ===
+    
+    #HECHOS#
+    #Personas del caso
+    kb.add_fact(Predicate("persona", (reynaldo,)))
+    kb.add_fact(Predicate("persona", (margot,)))
+    kb.add_fact(Predicate("persona", (pablo,)))
+    kb.add_fact(Predicate("persona", (bernardo,)))
+    
+    #Evidencia fisica: huellas de reynaldo en el arma
+    kb.add_fact(Predicate("huellas_en_arma", (reynaldo, frasco_arsenico)))
+    
+    #Coartadas: Pablo y Bernardo estuvieron lejos de la escena (coartada objetiva)
+    kb.add_fact(Predicate("lejos_de_escena", (pablo,)))
+    kb.add_fact(Predicate("lejos_de_escena", (bernardo,)))
+    
+    #Acusaciones y coartadas entre personajes
+    kb.add_fact(Predicate("acusa", (pablo, reynaldo))) #Pablo acusa a Reynaldo
+    kb.add_fact(Predicate("da_coartada", (margot, reynaldo))) #Margot da coartada a Reynaldo
+    kb.add_fact(Predicate("da_coartada", (reynaldo, margot))) #Reynaldo da coartada a Margot
+    
+    #Reynaldo no tiene coartada verificada (no hay testigo independiente)
+    #(ausencia de hecho- mundo cerrado)
+    
+    #=======================================================
+    #REGLAS#
+    X= Term("$X")
+    Y= Term("$Y")
+    
+    #Quien tiene huellas en el arma tiene evidencia directa en su contra
+    kb.add_rule(Rule(
+        head=Predicate("evidencia_directa", (X,)),
+        body=(Predicate("huellas_en_arma", (X, Term("$W"))),),
+    ))
+    
+    #Quien estuvo lejos de la escena esta descartado como culpable
+    kb.add_rule(Rule(
+        head=Predicate("descartado", (X,)),
+        body=(Predicate("lejos_de_escena", (X,)),),
+    ))
+    
+    #El testimonio de alguien descatado es confiable
+    kb.add_rule(Rule(
+        head=Predicate("testimonio_confiable", (X, Y)),
+        body=(Predicate("descartado", (X,)),
+              Predicate("acusa", (X, Y))),
+    ))
+    
+    #Quien tiene evidencia directa y no tiene coartada verificada es culpable, se modela "no coartada verificada"
+    #con ausencia del hecho coartada_verificada
+    kb.add_rule(Rule(
+        head=Predicate("culpable", (X,)),
+        body=(
+            Predicate("evidencia_directa", (X,)),
+            Predicate("sin_coartada_verificada", (X,)),
+        ),
+    ))
+    
+    #Reynaldo no tiene coartda verificada( hecho explicito para mundo cerrado)
+    kb.add_fact(Predicate("sin_coartada_verificada", (reynaldo,)))
+    
+    #Quien da coartada a un culpable lo esta encubreindo
+    kb.add_rule(Rule(
+        head=Predicate("encubridor", (X,)),
+        body=(
+            Predicate("da_coartada", (X, Y)),
+            Predicate("culpable", (Y,)),
+        ),
+    ))
+    
+    #Si dos personas se dan coartada mutuamente, existe una coartada cruzada
+    kb.add_rule(Rule(
+        head=Predicate("coartada_cruzada", (X, Y)),
+        body=(
+            Predicate("da_coartada", (X, Y)),
+            Predicate("da_coartada", (Y, X)),
+        ),
+    ))
+    
 
     # === END YOUR CODE ===
 
