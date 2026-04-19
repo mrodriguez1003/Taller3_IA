@@ -75,10 +75,21 @@ def crear_kb() -> KnowledgeBase:
     X=Term("$X")
     Y=Term("$Y")
     
+    '''
+    Versión inicial de reglas, antes de refinar con ayuda de IA. Se dejó comentada para mostrar el 
+    proceso de refinamiento.
+
     #Coartada objetiva -> descartado
     kb.add_rule(Rule(
         head=Predicate("descartado", (X,)),
         body=(Predicate("coartada_objetiva", (X,)),)
+    ))
+    '''
+
+    # Coartada verificada -> descartado
+    kb.add_rule(Rule(
+    head=Predicate("descartado", (X,)),
+    body=(Predicate("coartada_verificada", (X,)),)
     ))
     
     #Hereda actualmente y pierde con cambio -> motivo doble

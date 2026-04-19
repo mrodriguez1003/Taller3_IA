@@ -39,11 +39,10 @@ def get_all_models(atoms: set[str]) -> list[dict[str, bool]]:
 
         for model in models:
             model_true = model.copy()
-            model_true[atom] = True
+            model_true[atom]=True
             new_models.append(model_true)
-
             model_false = model.copy()
-            model_false[atom] = False
+            model_false[atom]=False
             new_models.append(model_false)
 
         models = new_models
@@ -72,13 +71,13 @@ def check_satisfiable(formula: Formula) -> tuple[bool, dict[str, bool] | None]:
     """
     # === YOUR CODE HERE ===
     atoms = get_atoms(formula)
-    models = get_all_models(atoms)
+    modelos = get_all_models(atoms)
 
-    for model in models:
-        if evaluate(formula, model):
-            return True, model
+    for modelo in modelos:
+        if evaluate(formula,modelo):
+            return True,modelo
 
-    return False, None
+    return False,None
     # === END YOUR CODE ===
 
 
@@ -101,11 +100,11 @@ def check_valid(formula: Formula) -> bool:
     """
     # === YOUR CODE HERE ===
     atoms = get_atoms(formula)
-    all_models = get_all_models(atoms)
+    models = get_all_models(atoms)
 
-    for model in all_models:
+    for model in models:
         result = evaluate(formula, model)
-        if result == False:
+        if result==False:
             return False
 
     return True
@@ -133,7 +132,7 @@ def check_entailment(kb: list[Formula], query: Formula) -> bool:
           y la query sea falsa.
     """
     # === YOUR CODE HERE ===
-    atoms = set()
+    atoms= set()
 
     for formula in kb:
         atoms.update(get_atoms(formula))
@@ -142,14 +141,13 @@ def check_entailment(kb: list[Formula], query: Formula) -> bool:
     models = get_all_models(atoms)
 
     for model in models:
-        kb_is_true = True
-
-        for formula in kb:
-            if not evaluate(formula, model):
-                kb_is_true = False
+        kbTrue = True
+        for f in kb:
+            if not evaluate(f, model):
+                kbTrue= False
                 break
 
-        if kb_is_true and not evaluate(query, model):
+        if kbTrue and not evaluate(query,model):
             return False
 
     return True
@@ -177,12 +175,12 @@ def truth_table(formula: Formula) -> list[tuple[dict[str, bool], bool]]:
     """
     # === YOUR CODE HERE ===
     atoms = get_atoms(formula)
-    models = get_all_models(atoms)
-    table = []
+    modelos = get_all_models(atoms)
+    table= []
 
-    for model in models:
-        result = evaluate(formula, model)
-        table.append((model, result))
+    for modelo in modelos:
+        result = evaluate(formula, modelo)
+        table.append((modelo, result))
 
     return table
     # === END YOUR CODE ===

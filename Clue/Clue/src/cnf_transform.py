@@ -1,4 +1,4 @@
--"""
+"""
 cnf_transform.py — Transformaciones a Forma Normal Conjuntiva (CNF).
 El pipeline completo to_cnf() llama a todas las transformaciones en orden.
 """
@@ -60,26 +60,22 @@ def eliminate_iff(formula: Formula) -> Formula:
           y solo transforma cuando encuentras un Iff.
     """
     # === YOUR CODE HERE ===
-    if isinstance(formula, Atom):
+    if isinstance(formula,Atom):
         return formula
-
-    if isinstance(formula, Not):
+    if isinstance(formula,Not):
         return Not(eliminate_iff(formula.operand))
-
     if isinstance(formula, And):
         return And(*(eliminate_iff(c) for c in formula.conjuncts))
-
     if isinstance(formula, Or):
         return Or(*(eliminate_iff(d) for d in formula.disjuncts))
-
     if isinstance(formula, Implies):
-        left = eliminate_iff(formula.antecedent)
-        right = eliminate_iff(formula.consequent)
+        left= eliminate_iff(formula.antecedent)
+        right= eliminate_iff(formula.consequent)
         return Implies(left, right)
 
     if isinstance(formula, Iff):
-        left = eliminate_iff(formula.left)
-        right = eliminate_iff(formula.right)
+        left= eliminate_iff(formula.left)
+        right= eliminate_iff(formula.right)
         return And(Implies(left, right), Implies(right, left))
 
     return formula
@@ -103,10 +99,10 @@ def eliminate_implication(formula: Formula) -> Formula:
           solo los nodos Implies.
     """
     # === YOUR CODE HERE ===
-    if isinstance(formula, Atom):
+    if isinstance(formula,Atom):
         return formula
 
-    if isinstance(formula, Not):
+    if isinstance(formula,Not):
         return Not(eliminate_implication(formula.operand))
 
     if isinstance(formula, And):
@@ -115,10 +111,10 @@ def eliminate_implication(formula: Formula) -> Formula:
     if isinstance(formula, Or):
         return Or(*(eliminate_implication(d) for d in formula.disjuncts))
 
-    if isinstance(formula, Iff):
-        left = eliminate_implication(formula.left)
-        right = eliminate_implication(formula.right)
-        return Iff(left, right)
+    if isinstance(formula,Iff):
+        left= eliminate_implication(formula.left)
+        right= eliminate_implication(formula.right)
+        return Iff(left,right)
 
     if isinstance(formula, Implies):
         left = eliminate_implication(formula.antecedent)
@@ -154,14 +150,23 @@ def push_negation_inward(formula: Formula) -> Formula:
     Nota: Esta funcion se llama DESPUES de eliminar Iff e Implies,
           asi que no necesitas manejar esos tipos.
     """
+    #DECLARACIÓN DE USO DE IA
+    # Esta función fue refinada con apoyo de IA después de una versión inicial
+    # La ayuda se enfocó en revisar la recursión y la correcta
+    # aplicación de leyes de De Morgan y doble negación.
+    #
+    # Prompt usado:
+    # "Revisa esta función en Python para push_negation_inward y sugiere
+    # correcciones para empujar negaciones hacia adentro correctamente,
+    # manejando Not, And, Or y doble negación sin cambiar la interfaz."
+
     # === YOUR CODE HERE ===
     if isinstance(formula, Atom):
         return formula
-
-    if isinstance(formula, Not):
+    if isinstance(formula,Not):
         inside = formula.operand
 
-        if isinstance(inside, Atom):
+        if isinstance(inside,Atom):
             return formula
 
         if isinstance(inside, Not):
@@ -170,13 +175,13 @@ def push_negation_inward(formula: Formula) -> Formula:
         if isinstance(inside, And):
             return Or(*(push_negation_inward(Not(c)) for c in inside.conjuncts))
 
-        if isinstance(inside, Or):
+        if isinstance(inside,Or):
             return And(*(push_negation_inward(Not(d)) for d in inside.disjuncts))
 
     if isinstance(formula, And):
         return And(*(push_negation_inward(c) for c in formula.conjuncts))
 
-    if isinstance(formula, Or):
+    if isinstance(formula,Or):
         return Or(*(push_negation_inward(d) for d in formula.disjuncts))
 
     return formula
@@ -205,6 +210,18 @@ def distribute_or_over_and(formula: Formula) -> Formula:
     Nota: Esta funcion se llama DESPUES de mover negaciones hacia adentro,
           asi que solo veras Atom, Not(Atom), And y Or.
     """
+
+    #DECLARACIÓN DE USO DE IA
+    # Esta función fue refinada con apoyo de IA después de una versión inicial
+    #La ayuda se usó para revisar los casos en que una disyunción
+    # debe distribuirse sobre una conjunción y cómo hacerlo de forma recursiva
+    #sin alterar la semántica de la fórmula.
+    #
+    # Prompt usado:
+    # "Ayúdame a corregir una función distribute_or_over_and en Python para
+    # fórmulas lógicas, distribuyendo Or sobre And de manera recursiva y
+    # conservando la estructura e interfaz existentes."
+
     # === YOUR CODE HERE ===
     if isinstance(formula, (Atom, Not)):
         return formula
@@ -259,6 +276,18 @@ def flatten(formula: Formula) -> Formula:
           Igual para Or con sus disjuncts.
           Si al final solo queda 1 elemento, retornalo directamente.
     """
+
+    #DECLARACIÓN DE USO DE IA
+    # Esta función fue refinada con apoyo de IA después de una versión inicial
+    # La ayuda se centró en identificar cómo aplanar correctamente
+    # conjunciones y disyunciones anidadas, evitando dejar estructuras
+    # redundantes dentro del árbol de la fórmula.
+    #
+    #Prompt usado(aproximado):
+    # "Revisa esta función flatten en Python y sugiere una forma correcta de
+    # aplanar And y Or anidados recursivamente, manteniendo la misma interfaz
+    # y sin cambiar el significado lógico de la expresión."
+
     # === YOUR CODE HERE ===
     if isinstance(formula, Atom):
         return formula

@@ -78,6 +78,11 @@ def crear_kb() -> KnowledgeBase:
         body=(Predicate("victima", (X,)),)
     ))
     
+    '''
+    version inicial de reglas, antes de refinar con ayuda de IA. 
+    Se dejó comentada para mostrar el proceso de refinamiento. 
+    Se usó ayuda de IA para revisar la formulación de la regla sobre la acusación creíble
+    
     #La acusación de un testigo imparcial es creíble
     kb.add_rule(Rule(
         head=Predicate("acusacion_creible", (X, Y)),
@@ -86,6 +91,16 @@ def crear_kb() -> KnowledgeBase:
             Predicate("acusa", (X, Y)),
         ),
     ))
+    '''
+
+    # La acusación de un testigo imparcial es creíble
+    kb.add_rule(Rule(
+    head=Predicate("acusacion_creible", (X, Y)),
+    body=(
+        Predicate("testigo_imparcial", (X,)),
+        Predicate("acusa", (X, Y)),
+    ),
+))
 
     #Quien estaba en la escena y es acusado de forma creíble es culpable
     kb.add_rule(Rule(
